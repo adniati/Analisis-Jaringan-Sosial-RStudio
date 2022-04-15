@@ -1,0 +1,819 @@
+#import data crawling twitter
+dataRep<-read.csv("data_cr24febRept.csv",header=TRUE,as.is=T);View(dataRep)
+dataRet<-read.csv("data_cr24febRett.csv",header=TRUE,as.is=T);View(dataRet)
+dataMen<-read.csv("data_cr24febMentiont.csv",header=TRUE,as.is=T);View(dataMen)
+
+#tes_jaringan_kecil
+#dataRep<-read.csv("rept.csv",header=TRUE,as.is=T);View(dataRep)
+#dataRet<-read.csv("rett.csv",header=TRUE,as.is=T);View(dataRet)
+#dataMen<-read.csv("3ent.csv",header=TRUE,as.is=T);View(dataMen)
+
+#-----------------------------------------------------------------
+#membuat data simpul
+dUser1<-cbind(dataRep$screen_name);dUser1
+dUser2<-cbind(dataRet$screen_name);dUser2
+dUser3<-cbind(dataMen$screen_name);dUser3
+dRep<-cbind(dataRep$reply_to_screen_name);dRep
+dRet<-cbind(dataRet$retweet_screen_name);dRet
+dMen<-cbind(dataMen$mentions_screen_name);dMen
+
+dataSimpul1<-rbind(dUser1,dUser2,dUser3,dRep,dRet,dMen);dataSimpul1
+ncol(dataSimpul1);nrow(dataSimpul1)
+
+dataSimpul2<-unique(dataSimpul1);dataSimpul2
+SimpulUser<-dataSimpul2
+ncol(dataSimpul2);nrow(dataSimpul2);mode(dataSimpul2)
+
+#data simpul
+write.csv(dataSimpul2,file="dataSimpulFinal.csv",row.names = FALSE);mode(dataSimpul2)
+
+#membuat kode nama simpul
+n<-nrow(dataSimpul2)
+for(i in 1:n) {dataSimpul2[i]<-i}
+kode<-dataSimpul2
+kode
+
+#NA kode simpul =4
+#---------------------------------------------------------------------------
+dtFrame<-data.frame(a=I(SimpulUser),b=kode);dtFrame;mode(dtFrame)
+dtSimpulKode<-write.csv(dtFrame,file="dtSimpulKode.csv",row.names = F)
+
+#data kode simpul
+dtSimpulKode<-read.csv("dtSimpulKode.csv",header=TRUE,as.is=T);View(dtSimpulKode)
+#----------------------------------------------------------------------------
+#membuat kode data crawling twitter
+#substitusi nilai 0 untuk nilai NA
+for (i in 1:nrow(dtSimpulKode)){
+  if(is.na(dtSimpulKode[i,1])==T){dtSimpulKode[i,1]<-0;dtSimpulKode[i,2]<-0}}
+
+dtSimpulKode2<-write.csv(dtSimpulKode,file="dtSimpulKode2.csv",row.names = F)
+#----------------------------------------------------------------------------
+
+#looping for()
+for (k in 1:ncol(dataRep)){
+  for (j in 1:nrow(dataRep)){
+    if(is.na(dataRep[j,k])==T) {dataRep[j,k]<-0}
+    for (i in 1:nrow(dtSimpulKode)){ 
+      if(dataRep[j,k]==dtSimpulKode[i,1]){
+        print(dataRep[j,k]<-dtSimpulKode[i,2])}
+      #print(dataRep[j,k]) 
+      # print(dtSimpulKode[i,1]) 
+    }}}
+
+for (k in 1:ncol(dataRet)){
+  for (j in 1:nrow(dataRet)){
+    if(is.na(dataRet[j,k])==T) {dataRet[j,k]<-0}
+    for (i in 1:nrow(dtSimpulKode)){ 
+      if(dataRet[j,k]==dtSimpulKode[i,1]){
+        print(dataRet[j,k]<-dtSimpulKode[i,2])
+      }}}}
+
+for (k in 1:ncol(dataMen)){
+  for (j in 1:nrow(dataMen)){
+    if(is.na(dataMen[j,k])==T) {dataMen[j,k]<-0}
+    for (i in 1:nrow(dtSimpulKode)){ 
+      if(dataMen[j,k]==dtSimpulKode[i,1]){
+        print(dataMen[j,k]<-dtSimpulKode[i,2])
+      }}}}
+
+r<-0;a1<-0;b1<-0
+for(p in 1:nrow(dataRep)){
+  for(q in 2:ncol(dataRep)){
+    if(dataRep[p,q]!=0){
+      #print(dataRep[p,q])
+      #cat("p=",p,"dan q=",q,"r=",r,"dataRep[p,q]=",dataRep[p,q],"dataRep[p,q]!=0 is ",dataRep[p,q]!=0,"\n")
+      #cat("p=",p,"dan q=",q,"dataRep[p,q]=",dataRep[p,q],"\n")
+      r<-r+1
+      a1[r]<-dataRep[p,1]
+      b1[r]<-dataRep[p,q]
+      print(dataRep[p,q])
+      #cat("a1[",r,"]=",a1[r],"dan b1[",r,"]=",b1[r],"\n")
+    }}}
+
+for(p in 1:nrow(dataRet)){
+  for(q in 2:ncol(dataRet)){
+    if(dataRet[p,q]!=0){
+      #print(dataRet[p,q])
+      #cat("p=",p,"dan q=",q,"r=",r,"dataRet[p,q]=",dataRet[p,q],"dataRet[p,q]!=0 is ",dataRet[p,q]!=0,"\n")
+      #cat("p=",p,"dan q=",q,"dataRep[p,q]=",dataRep[p,q],"\n")
+      r<-r+1
+      a1[r]<-dataRet[p,1]
+      b1[r]<-dataRet[p,q]
+      #print(dataRet[p,q])
+      #cat("a1[",r,"]=",a1[r],"dan b1[",r,"]=",b1[r],"\n")
+    }}}
+
+for(p in 1:nrow(dataMen)){
+  for(q in 2:ncol(dataMen)){
+    if(dataMen[p,q]!=0){
+      #print(dataMen[p,q])
+      #cat("p=",p,"dan q=",q,"r=",r,"dataMen[p,q]=",dataMen[p,q],"dataMen[p,q]!=0 is ",dataMen[p,q]!=0,"\n")
+      #cat("p=",p,"dan q=",q,"dataMen[p,q]=",dataMen[p,q],"\n")
+      r<-r+1
+      a1[r]<-dataMen[p,1]
+      b1[r]<-dataMen[p,q]
+      #print(dataMen[p,q])
+      #cat("a1[",r,"]=",a1[r],"dan b1[",r,"]=",b1[r],"\n")
+    }}}
+
+dtFrame<-data.frame(I(a1),b1);dtFrame
+write.csv(dtFrame,file="dataEdges.csv",row.names = F)
+dataEdges<-read.csv("dataEdges.csv", header=T, as.is=T) 
+View(dataEdges) #data sisi
+
+#---------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------
+#Pe3odelan graf
+library(igraph)
+Sisi<- read.csv("dataEdges.csv", header=T, as.is=T) ;View(Sisi)#data sisi
+Simpul<- read.csv("dtSimpulKode2.csv", header=T, as.is=T) ;View(Simpul)#data sisi
+head(Simpul) ;head(Sisi)
+
+for(r in 1:length(Simpul$b)){
+  if(Simpul$b[r]==0){
+    nilaiNA<-r  
+    }} 
+
+nrow(Simpul); length(unique(Simpul$b))
+nrow(Sisi); nrow(unique(Sisi[,c("a1", "b1")]))
+
+n<-nrow(Sisi)
+bobot<-matrix(0,n,1);bobot
+for(i in 1:n) {
+  for(j in 1:n) {
+    bobot[i]<-1
+  }}
+
+#----------------------------------------------------------------------------------
+Sisi <- Sisi[order(Sisi$a1, Sisi$b1),]  #membuat sisi berurutan
+write.csv(Sisi,file="sisiorder.csv",row.names = F)
+#----------------------------------------------------------------------------------
+Net <- graph_from_data_frame(d=Sisi, vertices=Simpul$b, directed=T)
+E(Net)$weight <- bobot
+edge_attr<-edge.attributes(Net)
+Net2<-delete_vertices(Net,nilaiNA)
+Net <- simplify(Net2, remove.multiple = TRUE, remove.loops = T)
+
+E(Net);V(Net)
+
+as_edgelist(Net, names=T)
+adj<-as_adjacency_matrix(Net, attr="weight");adj
+wStar<-max(E(Net)$weight)
+
+#----------------------------------------------------------------------------------
+                          #ANALISIS_JARINGAN
+#banyak_nilai-setralitas_tertinggi
+TopNum<-10
+#----------------------------------------------------------------------------------
+      #Sentralitas_DERAJAT
+#----------------------------------------------------------------------------------
+inDeg<-graph.strength(Net,mode="in");inDeg
+outDeg<-graph.strength(Net,mode="out");outDeg
+  SigDMaks<-(vcount(Net)-1)*wStar
+inDegNor<-inDeg/SigDMaks;inDegNor
+outDegNor<-outDeg/SigDMaks;outDegNor
+
+VinDegdf<-as.data.frame(inDeg);View(VinDegdf)
+VoutDegdf<-as.data.frame(outDeg);View(VoutDegdf)
+VinDegNordf<-as.data.frame(inDegNor);View(VinDegNordf)
+VoutDegNordf<-as.data.frame(outDegNor);View(VoutDegNordf)
+
+#----------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------
+    #Sentralitas_KEANTARAAN
+#----------------------------------------------------------------------------------
+E(Net)$weightClose<-1/E(Net)$weight
+Vbetw<-betweenness(
+  Net,
+  v = V(Net),
+  directed = TRUE,
+  weights = E(Net)$weightClose,
+  normalized = FALSE)
+VBetwNor<-betweenness(
+  Net,
+  v = V(Net),
+  directed = TRUE,
+  weights = E(Net)$weightClose,
+  normalized = TRUE)
+VBetweenessdf<-as.data.frame(Vbetw);View(VBetweenessdf)
+VBetweenessNordf<-as.data.frame(VBetwNor);View(VBetweenessNordf)
+
+#----------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------
+    #Sentralitas_KEDEKATAN
+#----------------------------------------------------------------------------------
+dst<-distances(Net,
+               v = V(Net),
+               to = V(Net),
+               mode = "out",
+               E(Net)$weightClose,
+               algorithm = "dijkstra")
+dst[dst == Inf] <- vcount(Net)
+VClose<-1/rowSums(dst)
+VCloseMax<-1/((vcount(Net)-1)/wStar)
+VCloseNor<-VClose/VCloseMax
+VClosenessdf<-as.data.frame(VClose);View(VClosenessdf)
+VCloseNordf<-as.data.frame(VCloseNor);View(VCloseNordf)
+
+#---------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------
+                              #VISUALISASI_JARINGAN
+#---------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------
+#jaringan_kecil
+#plot(Net,vertex.color="skyblue")
+
+#jaringan_besar
+l<-layout_with_fr(Net)
+l <- norm_coords(l, ymin=-1, ymax=1, xmin=-1, xmax=1)
+plot(Net, layout=l)
+plot(Net,vertex.color="skyblue",edge.arrow.size=0.2,vertex.size=5,
+     vertex.label.cex=0.5,layout=l*5,vertex.label.font=2.5)
+
+
+#---------------------------------------------------------------------------------------------------------------
+        #plot DERAJAT MASUK                            #INCIDENCY
+#---------------------------------------------------------------------------------------------------------------
+TopNum<-11
+warna<-c("gold","pink","skyblue","orange","yellow","red","blue","purple","green","brown","gray40")
+#warna<-c("gold","pink","skyblue")
+ecol<-rep("gray80",ecount(Net))
+vcol<-rep("gray80",vcount(Net))
+vlabel<-rep(0.3,vcount(Net))
+vclabel<-rep("gray40",vcount(Net))
+
+if(nilaiNA!=1){
+  Vsimpul1<-matrix(1:(nilaiNA-1),nilaiNA-1,1)
+  if(nilaiNA!=vcount(Net))
+      {Vsimpul2<-matrix((nilaiNA+1):(vcount(Net)+1),vcount(Net)-nilaiNA+1,1)
+      Vsimpul<-rbind(Vsimpul1,Vsimpul2)}
+  if(nilaiNA==vcount(Net))
+  {Vsimpul<-Vsimpul1
+  }}
+
+if(nilaiNA==1){
+  Vsimpul<-matrix(2:vcount(Net),vcount(Net)-1,1)}
+
+dfr<-data.frame(I(inDeg),Vsimpul)
+ord_dfr<-dfr[order(dfr$inDeg,dfr$Vsimpul,decreasing = TRUE),]
+
+r<-0;tNode<-matrix(0,TopNum,1)
+for(i in 1:TopNum){
+  r<-r+1
+  tNode[r]<-ord_dfr[i,2]
+  if(tNode[r]>nilaiNA){
+    tNode[r]<-tNode[r]-1}
+  inc.edges<-incident(Net,V(Net)[tNode[r]],mode="in")
+  ecol[inc.edges]<-warna[i]
+  vcol[V(Net)==V(Net)[ tNode[r]]]<-"skyblue"
+  vlabel[V(Net)==V(Net)[tNode[r]]]<-1
+  vclabel[V(Net)==V(Net)[tNode[r]]]<-"black"
+  }
+#------------------------------------------
+            #plot_jaringan_kecil
+#------------------------------------------
+#plot(Net,vertex.color=vcol,edge.color=ecol,edge.arrow.size=0.5,
+ #   edge.color=ecol,edge.label=NULL,vertex.size=5*inDeg,
+  # vertex.label.cex=0.5*inDeg,vertex.label.color="gray40")
+#------------------------------------------
+            #plot_jaringan_besar
+#------------------------------------------
+plot(Net,vertex.color=vcol,edge.arrow.size=1,
+    edge.color=ecol,edge.label=NULL,vertex.size=0.05*inDeg,
+   vertex.label.cex=vlabel,vertex.label.color=vclabel,layout=l)
+#for(i in 1:TopNum){
+#  legend(x=-1.5,y=-0.8+0.15*i,tNode[i],pch=21,col="#777777",pt.bg=warna[i],pt.cex=2,cex=.8,bty="n",ncol=1)
+#}
+
+#------------------------------------------
+                  #ADJACENCY
+#---------------------------------------------------------------------------------------------------------------
+par(mfrow=c(2,2),mar=c(1,0,0,0))
+r<-0
+for(i in 1:4){
+  r<-r+1
+  na3e<-c("plot1","plot2","plot3","plot4")
+  NodeSentral<-tNode[[r]]
+  NeighNodes<-neighbors(Net,v=V(Net)[NodeSentral],mode="in")
+  inc.edges<-incident(Net,V(Net)[NodeSentral],mode="in")
+    ecol<-rep("gray80",ecount(Net))
+    ecol[inc.edges]<-"blue"
+    vcol<-rep("gray",vcount(Net))
+    vcol[NeighNodes]<-"yellow"
+    vcol[V(Net)==V(Net)[NodeSentral]]<-"red"
+    vsize<-rep(0.05,vcount(Net))
+    vsize[NeighNodes]<-10
+    vsize[V(Net)==V(Net)[NodeSentral]]<-20
+    vlabel<-rep(0.3,vcount(Net))
+    vlabel[V(Net)==V(Net)[NodeSentral]]<-1
+    vlabel[NeighNodes]<-0.5
+    vclabel<-rep("gray40",vcount(Net))
+    vclabel[V(Net)==V(Net)[NodeSentral]]<-"skyblue"
+  #------------------------------------------
+              #plot_jaringan_kecil
+  #------------------------------------------
+  #plot(Net,vertex.color=vcol,edge.curved=NULL,edge.color=ecol,edge.arrow.size=0.3,
+  #    edge.color=ecol,edge.label=NULL,vertex.size=vsize,vertex.frame.color="#555555",
+    #   vertex.label.cex=0.5*inDeg,vertex.label.color="grey40")
+  #------------------------------------------
+              #plot_jaringan_besar
+  #------------------------------------------
+  plot(Net,vertex.color=vcol,edge.color=ecol,edge.arrow.size=0.5,
+     edge.color=ecol,edge.label=NULL,vertex.size=vsize,
+     vertex.label.cex=vlabel,vertex.label.color=vclabel)
+  na3eNode<-c("560= BTS_twt","596= CGV_ID", "CBIpictures", "BTStranslation_")
+  legend(x=-.5,y=-1,na3eNode[i],pch=21,col="#777777",pt.bg="red",pt.cex=2,cex=.8,bty="n",ncol=1)
+}
+
+#---------------------------------------------------------------------------------------------------------------
+          #plot DERAJAT KELUAR
+#---------------------------------------------------------------------------------------------------------------
+par(mfrow=c(1,1),mar=c(0,0,0,0))
+ecol<-rep("gray80",ecount(Net))
+vcol<-rep("gray80",vcount(Net))
+vlabcol<-rep("gray80",vcount(Net))
+vlabelcx<-rep(0.3,vcount(Net))
+vsize<-rep(0.5,vcount(Net))
+
+dfrOut<-data.frame(I(outDeg),Vsimpul)
+Out_dfr<-dfrOut[order(dfrOut$outDeg,dfrOut$Vsimpul,decreasing = TRUE),]
+
+r<-0;tNodeOut<-matrix(0,TopNum,1)
+for(i in 1:TopNum){
+  r<-r+1
+  tNodeOut[r]<-Out_dfr[i,2]
+  inc.edges<-incident(Net,V(Net)[tNodeOut[r]],mode="out")
+  N<-neighbors(Net,v=V(Net)[tNodeOut[r]],mode="out")
+  ecol[inc.edges]<-warna[i]
+  vcol[V(Net)==V(Net)[tNodeOut[r]]]<-warna[i]
+  vcol[N]<-"Red"
+  vsize[V(Net)==V(Net)[tNodeOut[r]]]<-Out_dfr[i,1]
+  vsize[N]<-1
+  #vlabelcx[V(Net)==V(Net)[tNode[r]]]<-1
+  #vlabcol[V(Net)==V(Net)[tNode[r]]]<-"skyblue"
+}
+
+#------------------------------------------
+        #plot_jaringan_kecil
+#------------------------------------------
+#plot(Net,vertex.color=vcol,edge.color=ecol,edge.arrow.size=0.5,
+ #    edge.color=ecol,edge.label=NULL,vertex.size=3*outDeg,
+  #   vertex.label.cex=0.5*outDeg,vertex.label.color="gray40")
+#------------------------------------------
+        #plot_jaringan_besar
+#------------------------------------------
+plot(Net,vertex.color=vcol,edge.color=ecol,edge.arrow.size=0.3,
+     edge.color=ecol,edge.label=NULL,vertex.size=vsize,
+     vertex.label.cex=vlabelcx,vertex.label.color=vlabcol,edge.size=1,vertex.color.frame="#55555")
+#title(main="Plot Sentralitas Derajat Keluar",cex.main=0.5)
+#for(i in 1:TopNum){
+ # legend(x=-1.5,y=-0.8+0.15*i,tNodeOut[i],pch=21,col="#777777",
+  #       pt.bg=warna[i],pt.cex=2,cex=.8,bty="n",ncol=1)}
+
+#------------------------------------------
+          #ADJACENCY
+#---------------------------------------------------------------------------------------------------------------
+par(mfrow=c(2,2),mar=c(1,0,0,0))
+
+r<-0
+for(i in 1:4){
+  r<-r+1
+  NodeSentralOut<-tNodeOut[[r]]
+  NeighNodesOut<-neighbors(Net,v=V(Net)[NodeSentralOut],mode="out")
+  inc.edges<-incident(Net,V(Net)[NodeSentralOut],mode="out")
+  ecol<-rep("gray80",ecount(Net))
+  ecol[inc.edges]<-"red"
+  vcol<-rep("gray80",vcount(Net))
+  vcol[NeighNodesOut]<-"skyblue"
+  vcol[V(Net)==V(Net)[NodeSentralOut]]<-"red"
+  vclabel<-rep("gray40",vcount(Net))
+  vclabel[V(Net)==V(Net)[NodeSentralOut]]<-"black"
+  vclabel[NeighNodesOut]<-"skyblue"
+  vsize<-rep(0.5,vcount(Net))
+  vsize[NeighNodesOut]<-8
+  vsize[V(Net)==V(Net)[NodeSentralOut]]<-30
+  vlabelcx<-rep(0.3,vcount(Net))
+  vlabelcx[V(Net)==V(Net)[NodeSentralOut]]<-1.25
+
+  #------------------------------------------
+            #plot_jaringan_kecil
+  #------------------------------------------
+  #plot(Net,vertex.color=vcol,edge.color=ecol,edge.arrow.size=0.5,
+  #    edge.color=ecol,edge.label=NULL,vertex.size=5*outDeg,
+    #   vertex.label.cex=0.5*outDeg,vertex.label.color="gray40")
+  #------------------------------------------
+            #plot_jaringan_besar
+  #------------------------------------------
+  NodeOutCentral<-c("196= staeberriyy", "125= _peuupeuuu", "136= littleejung", "41= jjkluvv7")
+  plot(Net,vertex.color=vcol,edge.color=ecol,edge.arrow.size=0.3,
+     edge.color=ecol,edge.label=NULL,vertex.size=vsize,
+     vertex.label.cex=vlabelcx,vertex.label.color=vclabel)
+  legend(x=-.5,y=-1,NodeOutCentral[i],pch=21,col="#777777",
+       pt.bg="red",pt.cex=1.5,cex=.7,bty="n",ncol=1)
+}
+
+#---------------------------------------------------------------------------------------------------------------
+          #plot sentralitas KEANTARAAN
+#---------------------------------------------------------------------------------------------------------------
+par(mfrow=c(1,1),mar=c(0,0,0,0))
+dfrBetw<-data.frame(I(Vbetw),Vsimpul)
+Betw_dfr<-dfrBetw[order(dfrBetw$Vbetw,dfrBetw$Vsimpul,decreasing = TRUE),]
+
+r<-0;tNodeBetw<-matrix(0,TopNum,1)
+for(i in 1:TopNum){
+  r<-r+1
+  tNodeBetw[r]<-Betw_dfr[i,2]};tNodeBetw
+nodeVisual<-tNodeBetw[1]
+
+#---------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------
+r<-0;l<-0;posisiAsal<-0;f<-0
+nodeAsal<-0;posisiTujuan<-0;nodeTujuan<-0
+banyakLintasan<-0;allNodesAll<-0
+
+for(i in 1:vcount(Net)){
+  patH<-all_shortest_paths(
+    Net,
+    from=V(Net)[i],
+    to = V(Net),
+    mode = "out",
+    weights = E(Net)$weightClose)
+  if(length(patH$res)>1){
+    r<-r+1
+    k[r]<-i
+    #------------------------------------
+    #------------------------------------
+    for(j in 1:length(patH$res)){
+      if(length(patH$res[[j]])>1){
+        banyakLintasan<-banyakLintasan+1
+      }}
+    #------------------------------------
+    #------------------------------------
+    for(j in 1:length(patH$res)){
+     for(u in 1:length(patH$res[[j]]))
+        {
+       f<-f+1
+       allNodesAll[f]<-patH$res[[j]][u] 
+       if(patH$res[[j]][u]==nodeVisual){
+          if(u!=1 && u!=length(patH$res[[j]])){
+            l<-l+1
+            posisiAsal[l]<-i
+            nodeAsal[l]<-posisiAsal[l]
+            if(nodeAsal[l]>nilaiNA){
+              nodeAsal[l]<-nodeAsal[l]+1}
+            posisiTujuan[l]<-patH$res[[j]][length(patH$res[[j]])]
+            nodeTujuan[l]<-posisiTujuan[l]
+          if(nodeTujuan[l]>nilaiNA){
+            nodeTujuan[l]<-nodeTujuan[l]+1}}
+      }}}}}
+
+b<-0;c<-0;h<-0;r<-0;y<-0;
+pq<-0;sq<-0;sq1<-0;allNodes<-0;allNodes2<-0
+patHlength<-0;NLintasan<-0
+for(i in 1:length(posisiAsal)){
+  patH<-all_shortest_paths(
+    Net,
+    from=V(Net)[posisiAsal[i]],
+    to = V(Net)[posisiTujuan[i]],
+    mode = "out",
+    weights = E(Net)$weightClose)
+  r<-r+1
+  NLintasan[r]<-length(patH$res)
+  if(NLintasan[r]==1){
+    y<-y+1
+    sq1[y]<-i}
+  if(NLintasan[r]>1){
+    for(j in 1:length(patH$res)){
+      for(u in 1:length(patH$res[[j]])){
+        if(patH$res[[j]][u]==nodeVisual){
+          b<-b+1
+          sq[b]<-i #posisiSi3pul asal_ke-i
+          pq[b]<-j #lintasan lebih dari satu memuat 241 saat j=pq
+      }}}}}
+  
+posisiAsal1<-posisiAsal[sq1]
+posisiTujuan1<-posisiTujuan[sq1]
+patHlength<-0;c<-0;h<-0;allNodes<-0
+for(i in 1:length(posisiAsal1)){
+    patH<-all_shortest_paths(
+      Net,
+      from=V(Net)[posisiAsal1[i]],
+      to = V(Net)[posisiTujuan1[i]],
+      mode = "out",
+      weights = E(Net)$weightClose)
+    c<-c+1
+    patHlength[c]<-length(patH$res[[1]])
+    for(u in 1:length(patH$res[[1]])){
+    h<-h+1
+    allNodes[h]<-patH$res[[1]][u]  
+    }}
+
+posisiAsal2<-posisiAsal[sq]
+posisiTujuan2<-posisiTujuan[sq]
+g<-pq
+for(i in 1:length(g)){
+  patH<-all_shortest_paths(
+    Net,
+    from=V(Net)[posisiAsal2[i]],
+    to = V(Net)[posisiTujuan2[i]],
+    mode = "out",
+    weights = E(Net)$weightClose)
+  c<-c+1
+  patHlength[c]<-length(patH$res[[g[i]]])
+  for(u in 1:length(patH$res[[g[i]]]))
+  {h<-h+1
+  allNodes[h]<-patH$res[[g[i]]][u]
+  }}
+
+d<-0;del<-0;p<-0
+for(i in 1:length(patHlength)){
+  d<-d+1
+  del[d]<-p+patHlength[i]
+  p<-del[d]}
+
+s1<-0;t1<-0
+for(i in 1:(length(allNodes)-1)){
+  s1<-s1+1
+  t1[s1]<-allNodes[i]
+  if(t1[s1]>nilaiNA){
+    t1[s1]<-allNodes[i]+1}}
+
+s1<-0;t2<-0
+for(i in 2:length(allNodes)){
+  s1<-s1+1
+  t2[s1]<-allNodes[i]
+  if(t2[s1]>nilaiNA){
+    t2[s1]<-allNodes[i]+1}}
+
+SisiBetw<-data.frame(I(t1),t2)
+
+for(j in 1:length(del)){
+    SisiBetw[del[j],1]<-0
+    SisiBetw[del[j],2]<-0}
+
+Nodes<-unique(allNodes)
+for(i in 1:length(Nodes)){
+  if(Nodes[i]>nilaiNA){
+    Nodes[i]<-Nodes[i]+1}}
+
+SisiBetw2<-SisiBetw[order(SisiBetw$t1,SisiBetw$t2),]
+SisiBetw3<-unique(SisiBetw2[length(del)+1:nrow(SisiBetw2),])
+SisiBetw3[nrow(SisiBetw3),1]<-0
+SisiBetw3[nrow(SisiBetw3),2]<-0
+SisiBetween<-SisiBetw3[1:nrow(SisiBetw3)-1,]
+Nodes<-cbind(Nodes)
+
+library(igraph)
+head(Nodes) ;head(SisiBetween)
+netBetw2 <- graph_from_data_frame(d=SisiBetween, vertices=Nodes, directed=T)
+netBetw2 <- simplify(netBetw2, remove.multiple = TRUE, remove.loops = T)
+
+vcol<-rep("skyblue",vcount(netBetw2))
+vcol[V(netBetw2)==V(netBetw2)[2]]<-"red"
+plot(netBetw2,vertex.color=vcol,edge.color="gray60",edge.arrow.size=0.7,edge.width=1.5,
+    edge.label=NULL,vertex.size=10, vertex.label.cex=1,vertex.label.color="gray40")
+
+###-------------------------
+###-------------------------
+
+
+inDegBetw<-graph.strength(netBetw2,mode="in");inDegBetw
+
+l<-0;PosisidaunBetw<-0
+for(i in 1:length(inDegBetw)){
+  if(inDegBetw[i]==0){
+    l<-l+1
+    PosisidaunBetw[l]<-i}}
+
+ecol<-rep("gray40",ecount(Net))
+vcol<-rep("gray40",vcount(Net))
+vlabel<-rep(0.3,vcount(Net))
+vclabel<-rep("gray80",vcount(Net))
+vsize<-rep(0.001,vcount(Net))
+vlabel<-rep(0.01,vcount(Net))
+ewdth<-rep(0.01,vcount(Net))
+
+allNodesUnique<-unique(allNodes);b<-0
+for(i in 1:length(allNodesUnique)){
+  incBetw<-incident(Net,V(Net)[allNodesUnique[i]],mode="out")
+  ecol[incBetw]<-"blue"
+  ewdth[incBetw]<-1.5
+  vcol[V(Net)==V(Net)[allNodesUnique[i]]]<-"skyblue"
+  vlabel[V(Net)==V(Net)[allNodesUnique[i]]]<-5
+  vclabel[V(Net)==V(Net)[allNodesUnique[i]]]<-"black"
+  vsize[V(Net)==V(Net)[allNodesUnique[i]]]<-5
+  vlabel[V(Net)==V(Net)[allNodesUnique[i]]]<-0.5}
+
+r<-0;bluei<-0
+for(i in 1:ecount(Net)){
+  if(ecol[i]=="blue"){
+    r<-r+1
+    bluei[r]<-i
+  }
+}
+
+cek<-Nodes[PosisidaunBetw]
+c<-0;nde<-0
+for(i in 1:length(cek)){
+  NeighBetw2<-neighbors(Net,v=V(Net)[cek[i]],mode="out")
+  #print(length(NeighBetw2))
+  for(j in 1:length(NeighBetw2)){
+    c<-c+1
+    nde[c]<-NeighBetw2[j]
+    }}
+
+allneigh<-unique(nde)
+
+for(i in 1:length(allneigh)){
+ incBetwDaun<-incident(Net,V(Net)[allneigh[i]],mode="in")
+  ecol[incBetwDaun]<-"gray40"
+  ewdth[incBetwDaun]<-0.01}
+
+
+for(i in 1:length(allneigh)){
+  if(allneigh[i]>nilaiNA){
+    allneigh[i]<-allneigh[i]+1
+  }
+}
+
+k<-0;r<-0
+for(i in 1:length(allneigh)){
+  for(j in 1:length(Nodes)){
+    if(allneigh[i]==Nodes[j]){
+      r<-r+1
+      k[r]<-i
+      }}}
+
+allneighAksen<-allneigh[k]
+for(i in 1:length(allneighAksen)){
+  incBetwDaun_<-incident(Net,V(Net)[allneighAksen[i]],mode="in")
+  ecol[incBetwDaun_]<-"blue"
+  ewdth[incBetwDaun_]<-1.5}
+
+vcol[V(Net)==V(Net)[nodeVisual]]<-"red"
+vsize[V(Net)==V(Net)[nodeVisual]]<-15
+
+plot(Net,vertex.color=vcol,edge.color=ecol,edge.arrow.size=0.3,
+     edge.color=ecol,edge.label=NULL,vertex.size=vsize,
+     vertex.label.cex=vlabel,vertex.label.color=vclabel,edge.width=ewdth)
+legend(x=-.5,y=-1,"125= _peuupeuuu",pch=21,col="#777777",pt.bg="red",pt.cex=2,cex=.8,bty="n",ncol=1)
+
+#---------------------------------------------------------------------------------------------------------------
+#plot sentralitas Kedekatan
+#---------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------
+par(mfrow=c(1,1),mar=c(0,0,0,0))
+dfrClose<-data.frame(I(VClose),Vsimpul)
+Close_dfr<-dfrClose[order(dfrClose$VClose,dfrClose$Vsimpul,decreasing = TRUE),]
+
+r<-0
+tNodeClose<-matrix(0,TopNum,1)
+for(i in 1:TopNum){
+  r<-r+1
+  tNodeClose[r]<-Close_dfr[i,2]
+  if(tNodeClose[r]>nilaiNA){
+    tNodeClose[r]<-tNodeClose[r]-1
+    }}
+  
+patH<-all_shortest_paths(
+  Net,
+  from=tNodeClose[1],
+  to = V(Net),
+  mode = "out",
+  weights = E(Net)$weightClose)
+
+nodePath<-unique(unlist(patH$res))
+
+unlist(patH$res)
+r<-0
+patHfrom<-0
+for(i in 1:(length(unlist(patH$res))-1)){
+  r<-r+1
+  if(unlist(patH$res)[[i]]>nilaiNA){
+    patHfrom[r]<-unlist(patH$res)[[i]]+1}
+  if(unlist(patH$res)[[i]]<nilaiNA){
+    patHfrom[r]<-unlist(patH$res)[[i]]
+    }}
+
+s<-0
+patHto<-0
+for(i in 2:length(unlist(patH$res))){
+  s<-s+1
+  if(unlist(patH$res)[[i]]>nilaiNA){
+    patHto[s]<-unlist(patH$res)[[i]]+1}
+  if(unlist(patH$res)[[i]]<nilaiNA){
+    patHto[s]<-unlist(patH$res)[[i]]
+  }}
+
+patHlengthClose<-0;r<-0
+for(i in 1:length(patH$res)){
+  r<-r+1
+  patHlengthClose[r]<-length(patH$res[[i]])
+}
+
+
+
+r<-0;delEdg<-0;p<-0
+for(i in 1:length(patHlengthClose)){
+  r<-r+1
+  delEdg[r]<-p+patHlengthClose[i]
+  p<-delEdg[r]
+}
+SisiPath<-data.frame(I(patHfrom),patHto)
+
+for(j in 1:length(delEdg)){
+  SisiPath[delEdg[j],1]<-0
+  SisiPath[delEdg[j],2]<-0}
+
+SisiPath<-SisiPath[order(SisiPath$patHfrom,SisiPath$patHto),]
+
+r<-0;f<-0;t<-0
+for(i in 1:nrow(SisiPath)){
+  if(SisiPath[i,1]!=0){
+    r<-r+1
+    f[r]<-SisiPath[i,1]
+    t[r]<-SisiPath[i,2]
+  }}
+
+SisiPath<-data.frame(I(f),t);SisiPath
+
+dtsisi<-matrix(0,length(nodePath),1)
+for(i in 1:length(nodePath)){
+  if(nodePath[i]>nilaiNA){
+    dtsisi[i]<-nodePath[i]+1}
+  if(nodePath[i]<nilaiNA){
+    dtsisi[i]<-nodePath[i]
+  }};dtsisi
+
+#buat_jaringan
+SimpulPath<-dtsisi
+library(igraph)
+head(SimpulPath) ;head(SisiPath)
+netPath <- graph_from_data_frame(d=SisiPath, vertices=SimpulPath, directed=T)
+netPath <- simplify(netPath, remove.multiple = TRUE, remove.loops = T)
+outDegPath<-graph.strength(netPath,mode="out");outDegPath
+
+vcol<-rep("skyblue",vcount(netPath))
+vcol[V(netPath)==V(netPath)[1]]<-"red"
+
+E(netPath);V(netPath)
+plot(netPath, edge.arrow.size=0.4,edge.curved=NULL,
+     vertex.label.cex=1,vertex.size=15,vertex.color=vcol)
+
+l<-0;Posisidaun<-0
+for(i in 1:length(outDegPath)){
+  if(outDegPath[i]==0){
+    l<-l+1
+    Posisidaun[l]<-i
+  }}
+
+PosisidaunNet<-SimpulPath[Posisidaun]
+for(i in 1:length(daun)){
+  if(PosisidaunNet[i]>nilaiNA){
+    PosisidaunNet[i]<-PosisidaunNet[i]-1
+  }}
+
+ecol<-rep("gray40",ecount(Net))
+vcol<-rep("gray40",vcount(Net))
+vlabel<-rep(0.3,vcount(Net))
+vclabel<-rep("gray40",vcount(Net))
+vsize<-rep(0.001,vcount(Net))
+vlabel<-rep(0.01,vcount(Net))
+for(i in 1:length(nodePath)){
+  incPath<-incident(Net,V(Net)[nodePath[i]],mode="out")
+  ecol[incPath]<-"red"
+  vcol[V(Net)==V(Net)[nodePath[i]]]<-"skyblue"
+  vcol[V(Net)==V(Net)[nodePath[1]]]<-"red"
+  vlabel[V(Net)==V(Net)[nodePath[i]]]<-5
+  vclabel[V(Net)==V(Net)[nodePath[i]]]<-"black"
+  vsize[V(Net)==V(Net)[nodePath[i]]]<-5
+  vsize[V(Net)==V(Net)[41]]<-10
+  vlabel[V(Net)==V(Net)[nodePath[i]]]<-0.5
+}
+
+#for(i in 1:length(PosisidaunNet)){
+ # incPathDaun<-incident(Net,V(Net)[PosisidaunNet[i]],mode="out")
+  #ecol[incPathDaun]<-"gray40"}
+
+plot(Net,vertex.color=vcol,edge.color=ecol,edge.arrow.size=0.5,
+     edge.color=ecol,edge.label=NULL,vertex.size=vsize,
+     vertex.label.cex=vlabel,vertex.label.color=vclabel)
+legend(x=-.5,y=-1,"41= jjkluvv7",pch=21,col="#777777",pt.bg="red",pt.cex=2,cex=.8,bty="n",ncol=1)
+
+r<-0;ecolRed<-0
+for(i in 1:ecount(Net)){
+  if(ecol[i]=="red"){
+    r<-r+1
+    ecolRed[r]<-i
+  }
+};E(Net)[ecolRed]
+#-----------------------------------------------------------------------------------------------------------------
+summary(Net)
+is_weighted(Net)
+is_directed(Net)
+is_connected(Net)
+is_simple(Net)
+
+clu <- components(Net,mode = c("weak", "strong"))
+groups(clu)
